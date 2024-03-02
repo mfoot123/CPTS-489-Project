@@ -98,3 +98,9 @@ header nav ul li a {
     text-decoration: none;
     font-size: 18px;
 }
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
