@@ -2,16 +2,11 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-image: linear-gradient(-45deg, #35C3F3 0%, #8b9fe8 20%, #e681d8 39%, #ffa9a4 76%, #FED2CE 100%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    background-color: #ffffff;
 }
 
 header {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-image: linear-gradient(-45deg, #35C3F3 0%, #8b9fe8 20%, #e681d8 39%, #ffa9a4 76%, #FED2CE 100%);
     color: #333;
     padding: 10px 20px;
     display: flex;
@@ -22,6 +17,7 @@ header {
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 1000;
 }
 
 header nav ul {
@@ -42,4 +38,13 @@ header nav ul li:last-child {
 header nav ul li a {
     color: #333;
     text-decoration: none;
+}
+
+.setting {
+    margin-bottom: 15px; /* Add some space between settings */
+}
+
+.settings-container {
+    margin-top: 65px;
+    padding: 20px;
 }
