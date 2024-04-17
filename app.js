@@ -1,18 +1,20 @@
-const express = require('express');
-const path = require('path');
+const session = require('express-session');
 
-const app = express();
+app.use(session({
+  secret: 'your secret key',
+  resave: false,
+  saveUninitialized: true
+}));
 
-// Serve static files from the public directory
-app.use(express.static('public'));
-
-// Route for the homepage
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/homepage.html'));
+  req.session.cart = req.session.cart || [];
+  // You can now add to req.session.cart as needed
+  res.sendFile(path.join(__dirname, '/public/homepage.html'));
 });
 
-// Set up the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// Example route to add an item to the cart
+app.get('/add-to-cart', (req, res) => {
+  let { item, quantity, price } = req.query;
+  req.session.cart.push({ item, quantity, price });
+  res.send('Item added to cart');
 });
