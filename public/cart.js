@@ -28,19 +28,21 @@ function addToCart(productName, quantity, price) {
 }
 
 function removeFromCart(productName) {
-
-    // parses the string retrieved from localStorage into a JavaScript object, if doesnt exist set as empty string
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let index = cart.findIndex(item => item.name === productName);
+    if (index !== -1) {
+        if (cart[index].quantity > 1) {
+            cart[index].quantity -= 1;
+        } else {
+            cart.splice(index, 1);
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
 
-    // find the item we want to delete, create new array without them
-    cart = cart.filter(item => item.name !== productName);
-
-    // updates the cart data stored in local storage
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    // refresh the page
-    window.location.reload();
+        // Update the display of the cart contents on the webpage
+        updateCartDisplay(cart);
+    }
 }
+
 
 function displayCart() {
 
@@ -91,15 +93,17 @@ function updateCartDisplay(cart) {
         totalPrice += item.price * item.quantity;
     });
 
-    // create a div element for displaying total price
+    // remove existing total price if it exists
+    const existingTotalSection = document.querySelector('.total-section');
+    if (existingTotalSection) {
+        existingTotalSection.remove();
+    }
+
+    // create and append new total price section
     const totalSection = document.createElement('div');
     totalSection.classList.add('total-section');
-
-    // populate total div with HTML content + the total price
     totalSection.innerHTML = `
         <h2>Total Price: $${totalPrice.toFixed(2)}</h2>
     `;
-
-    // append total div to the body of the document
     document.body.appendChild(totalSection);
 }
