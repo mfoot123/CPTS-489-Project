@@ -28,57 +28,58 @@ function addToCart(productName, quantity, price) {
 }
 
 function removeFromCart(productName) {
+
+    // rerieves cart from local storage, if it doesnt exist use empty array
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // find index of item we want to remove
     let index = cart.findIndex(item => item.name === productName);
+    
+    // if the index exists
     if (index !== -1) {
+
+        // and is more than 1
         if (cart[index].quantity > 1) {
+
+            // subtract quantity
             cart[index].quantity -= 1;
         } else {
+            
+            // if quantity = 1, remove the item
             cart.splice(index, 1);
         }
+        
+        // update the cart
         localStorage.setItem('cart', JSON.stringify(cart));
 
-        // Update the display of the cart contents on the webpage
+        // update the display
         updateCartDisplay(cart);
     }
 }
 
-
-function displayCart() {
-
-    // // parses the string retrieved from localStorage into a JavaScript object, if doesnt exist set as empty string
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // walk through object, display item + additional details
-    cart.forEach(item => {
-        console.log(`${item.name} x${item.quantity} - $${item.price}`);
-    });
-}
-
 function updateCartDisplay(cart) {
-
-    // select the product section container
+    
+    // select container used for dusplaying products
     const productSection = document.querySelector('.product-section');
 
     // clear existing contents
     productSection.innerHTML = '';
 
-    // total price variable
+    // total price var
     let totalPrice = 0;
 
-    // loop through each item in the cart
+    // loop through cart items
     cart.forEach(item => {
 
-        // create a div element for each product
+        // create a div element for each item
         const productDiv = document.createElement('div');
 
-        // add to product container
+        // add to container
         productDiv.classList.add('product-container');
-        
-        // populate the product div with HTML content
+
+        // set up of product
         productDiv.innerHTML = `
             <div class="product">
-                <img src="${item.image}" alt="${item.name}">
                 <h2>${item.name}</h2>
                 <p>Quantity: ${item.quantity}</p>
                 <p>Price: $${item.price}</p>
@@ -86,24 +87,14 @@ function updateCartDisplay(cart) {
             </div>
         `;
 
-        // append the div to the product section container
+        // append the product div to the product container
         productSection.appendChild(productDiv);
 
-        // calculate total price by multiplying items price with its quantity
+        // update total price by multiplying item price with its quantity
         totalPrice += item.price * item.quantity;
     });
 
-    // remove existing total price if it exists
-    const existingTotalSection = document.querySelector('.total-section');
-    if (existingTotalSection) {
-        existingTotalSection.remove();
-    }
-
-    // create and append new total price section
-    const totalSection = document.createElement('div');
-    totalSection.classList.add('total-section');
-    totalSection.innerHTML = `
-        <h2>Total Price: $${totalPrice.toFixed(2)}</h2>
-    `;
-    document.body.appendChild(totalSection);
+    // update the total price display
+    const totalSection = document.querySelector('.total-section h2');
+    totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
 }

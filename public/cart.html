@@ -1,52 +1,120 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Checkout</title>
-        <link rel="stylesheet" href="cart.css">
-    </head>
-    <header>
-        <a href="homepage.html"><h1>Welcome to our CPT_S 489 Project!</h1></a>
-        <nav>
-            <ul>
-                <li><a href="homepage.html">🏘️ Home</a></li>
-                <li><a href="settings.html">⚙️ Settings</a></li>
-                <li><a href="about.html">📚 About</a></li>
-                <li><a href="search.html">🔍 Search</a></li>
-            </ul>
-        </nav>
-    </header>
-    <body>
-        <div class="container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="cart.css">
+</head>
+<header>
+    <a href="homepage.html"><h1>Welcome to our CPT_S 489 Project!</h1></a>
+    <nav>
+        <ul>
+            <li><a href="homepage.html">🏘️ Home</a></li>
+            <li><a href="settings.html">⚙️ Settings</a></li>
+            <li><a href="about.html">📚 About</a></li>
+            <li><a href="search.html">🔍 Search</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <div class="container">
+        <div>
             <div class="product-section">
             </div>
-            <div class="shipping-section">
-                <h2>Shipping Information</h2>
-                <form>
-                    <label for="fullname">Full Name:</label>
-                    <input type="text" id="fullname" name="fullname" required>
+            <div class="total-section">
+                <h2>Total Price: $0.00</h2>
+            </div>
+        </div>
+        <div class="shipping-section">
+            <h2>Shipping Information</h2>
+            <form>
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+
+                <label for="zipcode">Zip Code:</label>
+                <input type="text" id="zipcode" name="zipcode" required>
+            </form>
+            <div class="payment-section">
+                <h2>Payment Information</h2>
+                <form id="payment-form">
+                    <label for="card-element">
+                        Credit or debit card
+                    </label>
+                    <div id="card-element">
+                    </div>
     
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <div id="card-errors" role="alert"></div>
     
-                    <label for="address">Address:</label>
-                    <input type="text" id="address" name="address" required>
-    
-                    <label for="city">City:</label>
-                    <input type="text" id="city" name="city" required>
-    
-                    <label for="zipcode">Zip Code:</label>
-                    <input type="text" id="zipcode" name="zipcode" required>
-    
-                    <button type="submit">Proceed to Checkout With Stripe</button>
+                    <button type="submit">Submit Payment</button>
                 </form>
             </div>
         </div>
-        <script src="cart.js"></script>
-        <script>
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            updateCartDisplay(cart);
-        </script>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="cart.js"></script>
+    <script>
+        // get cart data from local storage
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // display cart data in the product section
+        updateCartDisplay(cart);
+
+        // create a Stripe client with public key
+        var stripe = Stripe('pk_test_51P6TkSA2UcryXt5uZdkSlaKOCe71Vu7rqnK13f0ezVj3qK0OcPmTCXJSZWm4hxSGkPBtbC4ITite97StSXRrMk2J00gnMhyWR7');
+
+        // create an elements instance
+        var elements = stripe.elements();
+
+        // Create an card element instance
+        var card = elements.create('card');
+
+        // add card element into div
+        card.mount('#card-element');
+
+        // form creation
+        var form = document.getElementById('payment-form');
+
+        // listen for submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // create token
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+
+                    // inform the user if there was an error.
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+
+                    // send the token to /charge in app.js
+                    fetch('/charge', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({token: result.token.id})
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        console.log(data);
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
