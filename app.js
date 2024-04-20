@@ -7,6 +7,8 @@ const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const User = require('./models/User');
+const Product = require('./models/Product');
+const populateDB = require('./populateDB');
 
 var indexRouter = require('./routes/index');
 var coursesRouter = require('./routes/courses');
@@ -110,15 +112,24 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
 async function setup() {
   const testuser = await User.create({ username: "testuser", password: "1234", level: "admin"});
   console.log("testuser instance created...")
 }
 
-sequelize.sync({ force: true }).then(()=>{
+sequelize.sync({force: true}).then(()=>{
   console.log("Sequelize Sync Completed...");
   setup().then(()=> console.log("User setup complete"))
+
+  populateDB("Surface All in One", "surfaceallinone.html")
+  populateDB("Surface Pro", "surfacepro.html")
+  populateDB("Surface Laptop", "surfacelaptop.html")
+  populateDB("Framework Laptop 13", "frameworklaptop13.html")
+  populateDB("Framework Laptop 16", "frameworklaptop16.html")
+  populateDB("Framework Chromebook", "frameworkchromebook.html")
+  populateDB("iPhone", "iphone.html")
+  populateDB("Mac", "mac.html")
+  populateDB("MacBook", "macBook.html")
 })
 
 module.exports = app;
