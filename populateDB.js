@@ -17,11 +17,7 @@ async function populateDB(category, filename) {
         $('.product').each(async (index, element) => {
             const name = $(element).find('h2').text();
             const description = $(element).find('p').eq(0).text();
-            var price = parseFloat($(element).find('p').eq(2).text().replace('Price: $', ''));
-            if(isNaN(price))
-            {
-                price = parseFloat($(element).find('p').eq(3).text().replace('Price: $', ''));
-            }
+            const price = parseFloat($(element).find('p').eq(2).text().replace('Price: $', ''));
             const imageUrl = $(element).find('img').attr('src');
             const guideUrl = $(element).find('a').attr('href');
             try {
