@@ -12,7 +12,7 @@ const populateDB = require('./populateDB');
 
 var indexRouter = require('./routes/index');
 var coursesRouter = require('./routes/courses');
-// var productsRouter = require('./routes/products');
+var productsRouter = require('./routes/products');
 
 const app = express();
 
@@ -26,8 +26,7 @@ app.use(session({
 }));
 
 app.use('/', indexRouter);
-app.use('/courses', coursesRouter);
-// app.use('/products', productsRouter);
+app.use('/products', productsRouter);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -37,22 +36,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/homepage.html'));
-});
-
-app.get('/products', async function(req, res, next) {
-  console.log("IS IT MAKING IT HERE");
-  const categoryName = req.query.category;
-  const products = await Product.findAll({
-      where: {
-          category: categoryName,
-      },
-  });
-  console.log("IS IT MAKING IT HERE");
-  res.render('products', {products} );
-});
 
 // route to add an item to the cart
 app.get('/add-to-cart', (req, res) => {
