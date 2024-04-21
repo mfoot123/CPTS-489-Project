@@ -12,6 +12,7 @@ const populateDB = require('./populateDB');
 
 var indexRouter = require('./routes/index');
 var coursesRouter = require('./routes/courses');
+// var productsRouter = require('./routes/products');
 
 const app = express();
 
@@ -26,7 +27,7 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use('/courses', coursesRouter);
-
+// app.use('/products', productsRouter);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -39,6 +40,18 @@ app.use(express.json());
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/homepage.html'));
+});
+
+app.get('/products', async function(req, res, next) {
+  console.log("IS IT MAKING IT HERE");
+  const categoryName = req.query.category;
+  const products = await Product.findAll({
+      where: {
+          category: categoryName,
+      },
+  });
+  console.log("IS IT MAKING IT HERE");
+  res.render('products', {products} );
 });
 
 // route to add an item to the cart
@@ -117,19 +130,22 @@ async function setup() {
   console.log("testuser instance created...")
 }
 
-sequelize.sync({force: true}).then(()=>{
+sequelize.sync().then(()=>{
   console.log("Sequelize Sync Completed...");
-  setup().then(()=> console.log("User setup complete"))
+  if (User.count() == 0)
+  {
+    setup().then(()=> console.log("User setup complete"))
+  }
 
-  populateDB("Surface All in One", "surfaceallinone.html")
-  populateDB("Surface Pro", "surfacepro.html")
-  populateDB("Surface Laptop", "surfacelaptop.html")
-  populateDB("Framework Laptop 13", "frameworklaptop13.html")
-  populateDB("Framework Laptop 16", "frameworklaptop16.html")
-  populateDB("Framework Chromebook", "frameworkchromebook.html")
-  populateDB("iPhone", "iphone.html")
-  populateDB("Mac", "mac.html")
-  populateDB("MacBook", "macBook.html")
+  // populateDB("Surface All in One", "surfaceallinone.html")
+  // populateDB("Surface Pro", "surfacepro.html")
+  // populateDB("Surface Laptop", "surfacelaptop.html")
+  // populateDB("Framework Laptop 13", "frameworklaptop13.html")
+  // populateDB("Framework Laptop 16", "frameworklaptop16.html")
+  // populateDB("Framework Chromebook", "frameworkchromebook.html")
+  // populateDB("iPhone", "iphone.html")
+  // populateDB("Mac", "mac.html")
+  // populateDB("MacBook", "macBook.html")
 })
 
 module.exports = app;
