@@ -11,6 +11,7 @@ const Product = require('./models/Product');
 
 var indexRouter = require('./routes/index');
 var productRouter = require('./routes/products');
+var signupRouter = require('./routes/signup');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use(express.json());
 
 app.use('/', indexRouter);
 app.use('/products', productRouter);
+app.use('/signup', signupRouter);
 
 // route to add an item to the cart
 app.get('/add-to-cart', (req, res) => {

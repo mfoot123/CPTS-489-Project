@@ -17,6 +17,20 @@ class User extends Model {
         }
     }
 
+    static async createUser(username, password){
+        try {
+            const user = await User.create({
+                username: username,
+                password: password,
+                level: "user"
+            })
+            return user
+        } catch (error) {
+            console.log(error)
+            return null
+        }
+    }
+
 }
 
 User.init({
