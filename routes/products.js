@@ -7,7 +7,6 @@ router.get('/', async function(req, res, next) {
     const categoryName = req.query.category;
     const products = await Product.findAll({
         where: {
-            category: categoryName,
         },
     });
     console.log("IS IT MAKING IT HERE");

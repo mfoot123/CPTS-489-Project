@@ -130,7 +130,7 @@ input[type=button]:active, input[type=submit]:active, input[type=reset]:active  
   transform: scale(0.95);
 }
 
-input[type=text], input[type=password] {
+input[type="text"], input[type="password"] {
   background-color: #ced4da;
   border: none;
   color: #0d0d0d;
@@ -151,12 +151,12 @@ input[type=text], input[type=password] {
   border-radius: 5px 5px 5px 5px;
 }
 
-input[type=text]:focus {
+input[type="password"]:focus, input[type=text]:focus {
   background-color: #fff;
   border-bottom: 2px solid #5fbae9;
 }
 
-input[type=text]:placeholder {
+input[type="password"]:placeholder, input[type=text]:placeholder {
   color: #cccccc;
 }
 
@@ -297,13 +297,30 @@ input[type=text]:placeholder {
       <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
       <input type="submit" class="fadeIn fourth" value="Log In">
     </form>
-
-    <!-- Create Account -->
+    <% if(locals.msg && msg==="fail") { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <p class="mb-0">Username and/or password did not match.</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
+    </div>
+    <% } else if(locals.msg && msg==="raf") { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <p class="mb-0">Please login!</p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
+      </div>
+      <% } else if(locals.msg && msg==="logout") { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <p class="mb-0">Succesfully logged out!</p>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
+        </div>
+      <% } %>
+    <!-- Remind Passowrd -->
     <div id="formFooter">
       <a class="underlineHover" href="/signup">Create Account</a>
     </div>
 
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
 </body>
 </html>

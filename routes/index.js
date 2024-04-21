@@ -37,13 +37,18 @@ router.post('/signup', async function(req, res, next) {
   const username = req.body.username;
   const password = req.body.password;
 
+  if (!username || !password) { 
+    return res.redirect('/signup?msg=missingFields'); 
+  }
+
   const existingUser = await User.findUser(username); 
   if (existingUser) {
-      return res.redirect('/signup?msg=usernameTaken')
+    return res.redirect('/signup?msg=usernameTaken')
   }
 
   const newUser = await User.createUser(username, password);
-  res.redirect('/login'); 
+  res.redirect('/'); 
 });
+
 
 module.exports = router;

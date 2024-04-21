@@ -283,9 +283,9 @@ input[type=text]:placeholder {
 <body>
   <div class="wrapper fadeInDown">
       <div id="formContent">
-          <div class="container-fluid align-content-center"><h4>Course Management System</h4> </div>
+          <div class="container-fluid align-content-center"><h4>Right to Repair</h4> </div>
           <div class="fadeIn first">
-              <img src="/images/logo.png" id="icon" alt="User Icon" />
+            <img src="https://aftrr.org/wp-content/uploads/2017/02/right-to-repair-hand-wrench-30.png" id="icon" alt="User Icon" />
           </div>
 
           <form method="post" action="/signup"> 
@@ -293,6 +293,17 @@ input[type=text]:placeholder {
               <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
               <input type="submit" class="fadeIn fourth" value="Sign Up">
           </form>
+          <% if(locals.msg && msg==="emptyFields") { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <p class="mb-0">Please enter both a username and password!.</p>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
+            </div>
+            <% } else if(locals.msg && msg==="usernameTaken") { %>
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <p class="mb-0">This username is already taken!</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
+              </div>
+              <% } %>
 
           <div id="formFooter">
               <a class="underlineHover" href="/">Back to Login</a>
