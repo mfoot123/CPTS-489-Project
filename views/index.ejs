@@ -125,7 +125,7 @@ input[type=button]:active, input[type=submit]:active, input[type=reset]:active  
   transform: scale(0.95);
 }
 
-input[type=text] {
+input[type=text], input[type=password] {
   background-color: #ced4da;
   border: none;
   color: #0d0d0d;
@@ -289,13 +289,13 @@ input[type=text]:placeholder {
     <!-- Login Form -->
     <form method="post" action="/login">
       <input type="text" id="login" class="fadeIn second" name="username" placeholder="username">
-      <input type="text" id="password" class="fadeIn third" name="password" placeholder="password">
+      <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
       <input type="submit" class="fadeIn fourth" value="Log In">
     </form>
 
-    <!-- Remind Passowrd -->
+    <!-- Create Account -->
     <div id="formFooter">
-      <a class="underlineHover" href="#">Forgot Password?</a>
+      <a class="underlineHover" href="#">Don't have an account?</a>
     </div>
 
   </div>

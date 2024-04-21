@@ -22,8 +22,6 @@ app.use(session({
   saveUninitialized: true
 }));
 
-app.use('/', indexRouter);
-app.use('/courses', coursesRouter);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,6 +32,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use('/', indexRouter);
+app.use('/courses', coursesRouter);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/homepage.html'));
@@ -87,12 +88,6 @@ app.post('/charge', async (req, res) => {
     // payment failed
     res.status(500).json({ error: err.message });
   }
-});
-
-// starting the server at local host 3000
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
 });
 
 // catch 404 and forward to error handler
