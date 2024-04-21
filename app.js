@@ -8,10 +8,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const User = require('./models/User');
 const Product = require('./models/Product');
-const populateDB = require('./populateDB');
 
 var indexRouter = require('./routes/index');
-var coursesRouter = require('./routes/courses');
 var productsRouter = require('./routes/products');
 
 const app = express();
@@ -119,16 +117,6 @@ sequelize.sync().then(()=>{
   {
     setup().then(()=> console.log("User setup complete"))
   }
-
-  // populateDB("Surface All in One", "surfaceallinone.html")
-  // populateDB("Surface Pro", "surfacepro.html")
-  // populateDB("Surface Laptop", "surfacelaptop.html")
-  // populateDB("Framework Laptop 13", "frameworklaptop13.html")
-  // populateDB("Framework Laptop 16", "frameworklaptop16.html")
-  // populateDB("Framework Chromebook", "frameworkchromebook.html")
-  // populateDB("iPhone", "iphone.html")
-  // populateDB("Mac", "mac.html")
-  // populateDB("MacBook", "macBook.html")
 })
 
 module.exports = app;
