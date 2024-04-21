@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <link rel="stylesheet" href="/stylesheets/search.css"> <!-- Link to your CSS file -->
+</head>
+<header>
+    <a href="homepage.html"><h1>Welcome to our CPT_S 489 Project!</h1></a>
+    <nav>
+        <ul>
+            <li><a href="settings.html">⚙️ Settings</a></li>
+            <li><a href="about.html">📚 About</a></li>
+            <li><a href="homepage.html">🏘️ Home</a></li>
+            <li><a href="cart.html">🛒 Cart</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <br>
+    <div class="search-container">
+        <h2>Search Products</h2>
+        <form action="search-results.html" method="GET">
+            <input type="text" name="search" placeholder="Enter keywords...">
+            <!--Right now we can only link to one webpage without JS, so I'm just sending it here-->
+            <button type="submit" formaction="surfacepro.html">Search</button>
+        </form>
+    </div>
+    <form method="post" class="formContent" action="/products/new">
+        <fieldset>
+            <legend>Add Product to Database</legend>
+            <p>Choose a Category: </p>
+            <div>
+                <% for (categoryM of categories) { %>
+                    <input type="radio" id="<%=categoryM.category%>" name="category" value="<%=categoryM.category%>">
+                    <label for="<%=categoryM.category%>"><%=categoryM.category%></label><br>
+                <% } %>
+            </div>
+            <div>
+              <label for="name">Name:</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Name"
+              />
+            </div>
+            <div>
+              <label for="description">Description:</label>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                placeholder="Description"
+              />
+            </div>
+            <div>
+              <label for="price">Price:</label>
+              <input
+                type="number"
+                step="0.01"
+                id="price"
+                name="price"
+                placeholder="Price"
+              />
+            </div>
+            <div>
+              <label for="imageUrl">Image Url:</label>
+              <input
+                type="text"
+                id="imageUrl"
+                name="imageUrl"
+                placeholder="Image Url"
+              />
+            </div>
+            <div>
+                <label for="guideUrl">Guide Url:</label>
+                <input
+                  type="text"
+                  id="guideUrl"
+                  name="guideUrl"
+                  placeholder="Guide Url"
+                />
+              </div>
+            <button type="submit">Add to Database</button>
+        </fieldset>
+    </form>
+</body>
+</html>

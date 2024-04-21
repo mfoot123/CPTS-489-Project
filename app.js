@@ -11,6 +11,7 @@ const Product = require('./models/Product');
 
 var indexRouter = require('./routes/index');
 var productsRouter = require('./routes/products');
+var searchRouter = require('./routes/search');
 
 const app = express();
 
@@ -23,8 +24,6 @@ app.use(session({
   saveUninitialized: true
 }));
 
-app.use('/', indexRouter);
-app.use('/products', productsRouter);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -34,6 +33,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use('/', indexRouter);
+app.use('/products', productsRouter);
+app.use('/search', searchRouter)
 
 // route to add an item to the cart
 app.get('/add-to-cart', (req, res) => {
