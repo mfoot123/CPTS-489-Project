@@ -7,9 +7,10 @@ const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const User = require('./models/User');
+const Product = require('./models/Product');
 
 var indexRouter = require('./routes/index');
-var coursesRouter = require('./routes/courses');
+var productRouter = require('./routes/products');
 
 const app = express();
 
@@ -34,11 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/', indexRouter);
-app.use('/courses', coursesRouter);
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/homepage.html'));
-});
+app.use('/products', productRouter);
 
 // route to add an item to the cart
 app.get('/add-to-cart', (req, res) => {
@@ -111,9 +108,12 @@ async function setup() {
   console.log("testuser instance created...")
 }
 
-sequelize.sync({ force: true }).then(()=>{
+sequelize.sync().then(()=>{
   console.log("Sequelize Sync Completed...");
-  setup().then(()=> console.log("User setup complete"))
+  if (User.count() == 0)
+  {
+    setup().then(()=> console.log("User setup complete"))
+  }
 })
 
 module.exports = app;

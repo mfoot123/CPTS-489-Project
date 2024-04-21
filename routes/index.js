@@ -14,7 +14,7 @@ router.post('/login', async function(req, res, next) {
   const user = await User.findUser(req.body.username, req.body.password)
   if(user!== null){
     req.session.user = user
-    res.redirect("/courses")
+    res.redirect("/products")
   }else{
     res.redirect("/?msg=fail")
   }
