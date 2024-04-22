@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surface Pro</title>
+    <link rel="stylesheet" href="/stylesheets/product.css">
+</head>
+<body>
+    <header>
+        <a href="/homepage.html"><h1>Welcome to our CPT_S 489 Project!</h1></a>
+        <nav>
+            <ul>
+                <li><a href="/homepage.html">🏘️ Home</a></li>
+                <li><a href="/settings.html">⚙️ Settings</a></li>
+                <li><a href="/about.html">📚 About</a></li>
+                <li><a href="/search.html">🔍 Search</a></li>
+                <li><a href="/cart.html">🛒 Cart</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="product-container">
+        <% for (product of products) { %>
+            <div class="product">
+                <img src="<%=product.imageUrl%>">
+                <h2><%=product.name%></h2>
+                <p><%=product.description%></p>
+                <p><a href="<%=product.guideUrl%>">Documentation Surface Studio 2+</a></p>
+                <p>Price: $<%=product.price%></p>
+                <button onclick="addToCart('<%=product.name%>', 1, '<%=product.price%>')">Add to Cart</button>
+            </div>
+        <% } %>
+    </div>
+    <script src="/cart.js"></script>
+</body>
+</html>
