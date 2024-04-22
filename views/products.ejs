@@ -27,7 +27,7 @@
                 <p><%=product.description%></p>
                 <p><a href="<%=product.guideUrl%>">Documentation Surface Studio 2+</a></p>
                 <p>Price: $<%=product.price%></p>
-                <button onclick="addToCart('<%=product.name%>', 1, <%=product.price%>)">Add to Cart</button>
+                <button onclick="addToCart('<%=product.name%>', 1, '<%=product.price%>')">Add to Cart</button>
             </div>
         <% } %>
     </div>
