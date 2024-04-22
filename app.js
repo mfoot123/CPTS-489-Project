@@ -36,8 +36,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/', indexRouter);
-app.use('/products', productRouter);
 app.use('/signup', signupRouter);
+app.use('/products', productRouter);
 
 // route to add an item to the cart
 app.get('/add-to-cart', (req, res) => {

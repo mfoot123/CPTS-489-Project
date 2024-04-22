@@ -1,27 +1,24 @@
 var express = require('express');
+const User = require('../models/User');
 var router = express.Router();
-const User = require('../models/User'); 
 
-router.get('/signup', function(req, res, next) {
-    res.render('signup'); 
+router.get('/', function(req, res, next) {
+    res.render('signup', { msg: req.session.msg });
 });
 
-router.post('/signup', async function(req, res, next) {
+router.post('/register', async function(req, res, next) {
     const username = req.body.username;
     const password = req.body.password;
-
-    if (!username || !password) { 
-        return res.redirect('/signup?msg=missingFields'); 
+  
+    const existingUser = await User.checkUsername(username); 
+    if (existingUser == true) {
+        req.session.msg = 'error';
+        res.redirect('/signup');
+    } else if (existingUser == false) {
+        req.session.msg = 'success';
+        const newUser = await User.createUser(username, password);
+        res.redirect('/'); 
     }
-
-    const existingUser = await User.findUser(username); 
-    if (existingUser) {
-        console.log('Username already taken');
-        return res.redirect('/signup?msg=usernameTaken')
-    }
-
-    const newUser = await User.createUser(username, password);
-    res.redirect('/'); 
-});
+  });
 
 module.exports = router;

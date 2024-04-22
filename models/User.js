@@ -17,6 +17,21 @@ class User extends Model {
         }
     }
 
+    static async checkUsername(username)
+    {
+        try {
+            const user = await User.findByPk(username)
+            if(user){
+                return true
+            }else{
+                return false
+            }
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    }
+
     static async createUser(username, password){
         try {
             const user = await User.create({
