@@ -16,10 +16,19 @@ router.use(sessionChecker)
 
 router.get('/', async function(req, res, next) {
     try{
+        let admin = false;
         const categories = await Product.findAll({
             attributes: [[sequelize.fn('DISTINCT', sequelize.col('category')), 'category']]
         });
-        res.render('search', {categories} );
+        if(req.session.user && req.session.user.level == 'admin')
+        {
+            admin = true;
+            res.render('search', {categories, admin} );
+        }
+        else
+        {
+            res.render('search', {categories, admin} );
+        }
     }
     catch(error)
     {

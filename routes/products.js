@@ -52,4 +52,28 @@ router.post('/new', async function(req, res, next)
     }
 });
 
+router.get('/delete', async function(req, res, next) {
+    try{
+        const modelName = req.query.name;
+        const product = await Product.findOne({
+            where: {
+                name: modelName,
+            },
+        });
+        if (product)
+        {
+            await product.destroy();
+            res.redirect('/search');
+        }
+        else
+        {
+            res.redirect("/?msg=product+does+not+exist")
+        }
+    }
+    catch(error){
+        console.log(error.message);
+        res.redirect("/?msg=product+does+not+exist")
+    }
+});
+
 module.exports = router;

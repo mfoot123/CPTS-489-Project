@@ -26,6 +26,7 @@
             <button type="submit">Search</button>
         </form>
     </div>
+    <% if (admin) { %>
     <form method="post" class="formContent" action="/products/new">
         <fieldset>
             <legend>Add Product to Database</legend>
@@ -85,5 +86,14 @@
             <button type="submit">Add to Database</button>
         </fieldset>
     </form>
+    <div class="search-container">
+      <h3>Delete From Database By Name</h2>
+      <form action="/products/delete" method="GET">
+          <input type="text" name="name" placeholder="Enter keywords...">
+          <button type="submit">Enter the Name</button>
+      </form>
+  </div>
+    <%}%>
+
 </body>
 </html>
