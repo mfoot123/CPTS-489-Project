@@ -278,7 +278,7 @@ input[type="password"]:placeholder, input[type=text]:placeholder {
 
     </style>
 <!------ Include the above in your HEAD tag ---------->
-    <title>Login</title>
+    <title>Sign Up</title>
 </head>
 <body>
 
@@ -291,31 +291,21 @@ input[type="password"]:placeholder, input[type=text]:placeholder {
       <img src="https://aftrr.org/wp-content/uploads/2017/02/right-to-repair-hand-wrench-30.png" id="icon" alt="User Icon" />
     </div>
 
-    <!-- Login Form -->
-    <form method="post" action="/login">
-      <input type="text" id="login" class="fadeIn second" name="username" placeholder="username" required>
+    <!-- Sign Up Form -->
+    <form method="post" action="/signup/register">
+      <input type="text" id="signup" class="fadeIn second" name="username" placeholder="username" required>
       <input type="password" id="password" class="fadeIn third" name="password" placeholder="password" required>
-      <input type="submit" class="fadeIn fourth" value="Log In">
+      <input type="submit" class="fadeIn fourth" value="Sign Up">
     </form>
-    <% if(locals.msg && msg==="fail") { %>
+    <% if(msg && msg==="error") { %>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <p class="mb-0">Username and/or password did not match.</p>
+      <p class="mb-0">That username is already taken! Please enter another.</p>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
     </div>
-    <% } else if(locals.msg && msg==="raf") { %>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <p class="mb-0">Please login!</p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
-      </div>
-      <% } else if(locals.msg && msg==="logout") { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <p class="mb-0">Succesfully logged out!</p>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">&times</button>
-        </div>
-      <% } %>
+    <% } %>
     <!-- Remind Passowrd -->
     <div id="formFooter">
-      <a class="underlineHover" href="/signup">Create Account</a>
+      <p>Already have an account? <a href="/">Login here</a></p>
     </div>
 
   </div>

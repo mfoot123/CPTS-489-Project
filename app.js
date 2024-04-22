@@ -12,6 +12,7 @@ const Product = require('./models/Product');
 var indexRouter = require('./routes/index');
 var productsRouter = require('./routes/products');
 var searchRouter = require('./routes/search');
+var signupRouter = require('./routes/signup');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use(express.json());
 app.use('/', indexRouter);
 app.use('/products', productsRouter);
 app.use('/search', searchRouter)
+app.use('/signup', signupRouter);
 
 // route to add an item to the cart
 app.get('/add-to-cart', (req, res) => {
@@ -86,12 +88,6 @@ app.post('/charge', async (req, res) => {
     // payment failed
     res.status(500).json({ error: err.message });
   }
-});
-
-// starting the server at local host 3000
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
 });
 
 // catch 404 and forward to error handler
