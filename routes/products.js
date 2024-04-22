@@ -11,17 +11,45 @@ const sessionChecker = (req, res, next)=>{
     }
   }
   
-  router.use(sessionChecker)
+router.use(sessionChecker)
 
 router.get('/', async function(req, res, next) {
-    console.log("IS IT MAKING IT HERE");
-    const categoryName = req.query.category;
-    const products = await Product.findAll({
-        where: {
-        },
-    });
-    console.log("IS IT MAKING IT HERE");
-    res.render('products', {products} );
+    try{
+        const categoryName = req.query.category;
+        const products = await Product.findAll({
+            where: {
+                category: categoryName,
+            },
+        });
+        res.render('products', {products} );
+    }
+    catch(error){
+        console.log(error.message);
+        res.redirect("/?msg=incorrect+category+name")
+    }
+});
+router.post('/new', async function(req, res, next)
+{
+    try{
+        //console.log(req.body.name);
+        const {category, name, description, price, imageUrl, guideUrl} = req.body;
+        await Product.create(
+            {
+                category,
+                name,
+                description, 
+                price, 
+                imageUrl,
+                guideUrl
+            }
+        );
+        res.redirect("/search");        
+    }
+    catch(error)
+    {
+        console.log(error.message);
+        res.redirect("/?msg=failed+to+validate+product");
+    }
 });
 
 module.exports = router;

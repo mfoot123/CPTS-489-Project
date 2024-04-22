@@ -10,7 +10,8 @@ const User = require('./models/User');
 const Product = require('./models/Product');
 
 var indexRouter = require('./routes/index');
-var productRouter = require('./routes/products');
+var productsRouter = require('./routes/products');
+var searchRouter = require('./routes/search');
 var signupRouter = require('./routes/signup');
 
 const app = express();
@@ -24,7 +25,6 @@ app.use(session({
   saveUninitialized: true
 }));
 
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -36,8 +36,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/', indexRouter);
+app.use('/products', productsRouter);
+app.use('/search', searchRouter)
 app.use('/signup', signupRouter);
-app.use('/products', productRouter);
 
 // route to add an item to the cart
 app.get('/add-to-cart', (req, res) => {
@@ -104,7 +105,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
 async function setup() {
   const testuser = await User.create({ username: "testuser", password: "1234", level: "admin"});
   console.log("testuser instance created...")

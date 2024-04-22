@@ -1,6 +1,7 @@
 var express = require('express');
 const User = require('../models/User');
 var router = express.Router();
+const path = require('path')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
