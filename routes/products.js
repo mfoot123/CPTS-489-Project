@@ -43,7 +43,7 @@ router.post('/new', async function(req, res, next)
                 guideUrl
             }
         );
-        res.redirect("/search");        
+        res.redirect("/search?msg=success");        
     }
     catch(error)
     {
@@ -63,7 +63,7 @@ router.get('/delete', async function(req, res, next) {
         if (product)
         {
             await product.destroy();
-            res.redirect('/search');
+            res.redirect('/search?msg=success');
         }
         else
         {
