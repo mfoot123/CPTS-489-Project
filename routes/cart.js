@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
-const Cart = require('../models/Cart'); // Ensure this import is correct
+const Cart = require('../models/Cart');
+const sequelize = require('../db');
 
 // Open or create the SQLite database
-const db = new sqlite3.Database('repairdb.sqlite');
+const db = new sqlite3.Database("database/repairdb.sqlite");
 
 // Route to add an item to the cart
 router.post('/add-to-cart', async (req, res) => {
@@ -37,7 +38,7 @@ router.delete('/remove-from-cart', (req, res) => {
   const { productName } = req.body;
 
   db.run(
-    'DELETE FROM Cart WHERE product_name = ?',
+    'DELETE FROM Carts WHERE product_name = ?',
     [productName],
     (err) => {
       if (err) {
@@ -49,26 +50,27 @@ router.delete('/remove-from-cart', (req, res) => {
   );
 });
 
-// Route to get all items in the cart
 router.get('/cart-data', (req, res) => {
-  db.all('SELECT * FROM Cart', (err, rows) => {
-    if (err) {
-      res.status(500).json({ success: false, message: 'Error retrieving cart data' });
-    } else {
-      res.status(200).json(rows); // Return cart data
-    }
+    db.all('SELECT * FROM Carts', (err, rows) => {
+      if (err) {
+        console.error("Error retrieving cart data:", err);
+        res.status(500).json({ success: false, message: 'Error retrieving cart data' });
+      } else {
+        res.status(200).json(rows);
+      }
+    });
   });
-});
-
-// Route to display the cart page
-router.get('/', (req, res) => {
-  db.all('SELECT * FROM Cart', (err, rows) => {
-    if (err) {
-      res.status(500).send('Error retrieving cart items');
-    } else {
-      res.render('cart', { cartItems: rows });
-    }
+  
+  router.get('/', (req, res) => {
+    db.all('SELECT * FROM Carts', (err, rows) => {
+      if (err) {
+        console.error("Error retrieving cart items:", err);
+        res.status(500).send('Error retrieving cart items');
+      } else {
+        res.render('cart', { cartItems: rows });
+      }
+    });
   });
-});
+  
 
 module.exports = router;

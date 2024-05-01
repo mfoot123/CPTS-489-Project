@@ -92,7 +92,7 @@ function addToCart(productName, quantity, price) {
 }
 
 function updateCart() {
-            fetch('/cart-data') // Correct path for fetching cart data
+            fetch('/cart/cart-data') // Correct path for fetching cart data
             .then((response) => {
                 if (!response.ok) {
                 throw new Error('Failed to retrieve cart data');
