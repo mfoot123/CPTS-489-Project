@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surface Pro</title>
+    <title>Product List</title>
     <link rel="stylesheet" href="/stylesheets/product.css">
 </head>
 <body>
@@ -14,22 +14,116 @@
                 <li><a href="/homepage.html">🏘️ Home</a></li>
                 <li><a href="/about.html">📚 About</a></li>
                 <li><a href="/search">🔍 Search</a></li>
-                <li><a href="/cart.html">🛒 Cart</a></li>
+                <li><a href="/cart">🛒 Cart</a></li>
             </ul>
         </nav>
     </header>
+    
     <div class="product-container">
-        <% for (product of products) { %>
+        <% products.forEach(product => { %>
             <div class="product">
-                <img src="<%=product.imageUrl%>">
-                <h2><%=product.name%></h2>
-                <p><%=product.description%></p>
-                <p><a href="<%=product.guideUrl%>">Documentation Surface Studio 2+</a></p>
-                <p>Price: $<%=product.price%></p>
-                <button onclick="addToCart('<%=product.name%>', 1, '<%=product.price%>')">Add to Cart</button>
+                <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+                <h2><%= product.name %></h2>
+                <p><%= product.description %></p>
+                <p><a href="<%= product.guideUrl %>">Documentation for <%= product.name %></a></p>
+                <p>Price: $<%= product.price.toFixed(2) %></p> 
+
+                <button onclick="addToCart('<%= product.name %>', 1, parseFloat('<%= product.price %>'))">Add to Cart</button>
             </div>
-        <% } %>
+        <% }); %>
     </div>
-    <script src="/cart.js"></script>
+    <script>
+    function addToCart(productName, quantity, price) {
+
+        console.log("addToCart called:", { productName, quantity, price });
+
+        if (!productName) {
+            console.error("Product name is undefined or null");
+        }
+
+        if (!price && price !== 0) {
+            console.error("Price is undefined or null");
+        }
+
+        console.log("Data to be sent:", {
+            productName,
+            quantity,
+            price,
+        });
+
+        fetch('/cart/add-to-cart', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            productName,
+            quantity,
+            price,
+            }),
+        })
+        .then((response) => {
+            console.log("Response status:", response.status);
+
+            if (!response.ok) {
+            console.error("Failed to add to cart. Status:", response.status);
+            throw new Error('Failed to add to cart');
+            }
+
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Response data:", data);
+
+            if (data.success) {
+            console.log("Product successfully added to cart:", data);
+            updateCart();
+            } else {
+            console.error("Failed to add product to cart. Message:", data.message);
+            }
+        })
+        .catch((error) => { 
+            console.error('Error in addToCart:', error);
+        });
+    }
+
+    function updateCart() {
+        fetch('/cart/cart-data')
+        .then((response) => {
+            if (!response.ok) {
+            throw new Error('Failed to retrieve cart data');
+            }
+            return response.json();
+        })
+        .then((cart) => {
+            const productSection = document.querySelector('.product-section');
+            productSection.innerHTML = '';
+    
+            let totalPrice = 0;
+    
+            cart.forEach((item) => {
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('product-container');
+            productDiv.innerHTML = `
+                <div class="product">
+                <h2>${item.product_name}</h2>
+                <p>Quantity: ${item.quantity}</p>
+                <p>Price: $${item.product_price}</p>
+                <button onclick="removeFromCart('${item.product_name}')">Remove from Cart</button>
+                </div>
+            `;
+            productSection.appendChild(productDiv);
+    
+            totalPrice += item.product_price * item.quantity;
+            });
+    
+            const totalSection = document.querySelector('.total-section h2');
+            totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+        })
+        .catch((error) => {
+            console.error('Error updating cart display:', error);
+        });
+    }
+    </script>
 </body>
 </html>
