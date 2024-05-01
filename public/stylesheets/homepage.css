@@ -88,7 +88,7 @@ header nav ul li a {
     opacity: 1;
 }
 
-.box .overlay a {
+.box .overlay {
     color: #fff;
     text-decoration: none;
     font-size: 18px;
