@@ -5,116 +5,106 @@ const stripe = require('stripe')('sk_test_51P6TkSA2UcryXt5ubQvrkqVIaPnzfvtge0MAM
 const sequelize = require('./db');
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const logger = require('morgan');
+
+// Import models
 const User = require('./models/User');
 const Product = require('./models/Product');
+const Cart = require('./models/Cart');
 
-var indexRouter = require('./routes/index');
-var productsRouter = require('./routes/products');
-var searchRouter = require('./routes/search');
-var signupRouter = require('./routes/signup');
+// Import routers
+const indexRouter = require('./routes/index');
+const productsRouter = require('./routes/products');
+const searchRouter = require('./routes/search');
+const signupRouter = require('./routes/signup');
+const cartRouter = require('./routes/cart');
 
 const app = express();
 
-// view engine setup
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// Middleware setup
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(bodyParser.json());
 
-app.set('trust proxy', 1) // trust first proxy
+// Session setup
+app.set('trust proxy', 1);
 app.use(session({
   secret: 'wsu489',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
-}))
+}));
 
+// Use routers
 app.use('/', indexRouter);
 app.use('/products', productsRouter);
-app.use('/search', searchRouter)
+app.use('/search', searchRouter);
 app.use('/signup', signupRouter);
+app.use('/cart', cartRouter);
 
-// route to add an item to the cart
-app.get('/add-to-cart', (req, res) => {
-
-  // save our query
-  let { item, quantity, price } = req.query;
-
-  // see if a session exists
-  req.session.cart = req.session.cart || [];
-
-  // push our query
-  req.session.cart.push({ item, quantity, price });
-
-  // success message
-  res.send('Item added to cart');
-});
-
-// route to handle the payment process with Stripe
+// Route for handling Stripe payment
 app.post('/charge', async (req, res) => {
   try {
     const token = req.body.token;
 
-    // calculate total cart amount
+    // Calculate total cart amount from the session cart
     const cart = req.session.cart || [];
-    let totalAmount = 0;
+    let totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    // iterate through each item in the cart and sum up the total amount
-    cart.forEach(item => {
-      totalAmount += item.price * item.quantity;
-    });
+    // Convert to cents for Stripe
+    const amountInCents = Math.round(totalAmount * 100);
 
-    // convert totalAmount to cents for Stripe
-    const amountInCents = Math.round(totalAmount * 100); 
-
-    // create charge using the token and total cart amount
+    // Create a Stripe charge
     const charge = await stripe.charges.create({
       amount: amountInCents,
       currency: 'usd',
-      description: 'Payment for items in the cart',
+      description: 'Payment for cart items',
       source: token,
     });
 
-    // handle successful charge
+    // Clear the session cart after successful payment
+    req.session.cart = [];
+
+    // Successful payment
     res.json({ message: 'Payment successful', charge });
   } catch (err) {
-    
-    // payment failed
+    console.error('Error processing Stripe charge:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+// 404 handler
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
+// Global error handler
+app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error'); // Render the error page
 });
-async function setup() {
-  const testuser = await User.create({ username: "testuser", password: "1234", level: "admin"});
-  console.log("testuser instance created...")
-}
 
-sequelize.sync().then(()=>{
-  console.log("Sequelize Sync Completed...");
-  if (User.count() == 0)
-  {
-    setup().then(()=> console.log("User setup complete"))
-  }
-})
+// Sequelize sync
+sequelize.sync().then(() => {
+  console.log('Sequelize sync completed.');
+
+  // Create a test user if none exists
+  User.count().then((count) => {
+    if (count === 0) {
+      setup().then(() => console.log('User setup complete'));
+    }
+  });
+});
 
 module.exports = app;
