@@ -7,7 +7,7 @@ const Cart = require('../models/Cart'); // Ensure this import is correct
 const db = new sqlite3.Database('repairdb.sqlite');
 
 // Route to add an item to the cart
-router.post('/cart/add-to-cart', async (req, res) => {
+router.post('/add-to-cart', async (req, res) => {
     console.log("Received data:", req.body); // Debugging log
     try {
       const { productName, quantity, price } = req.body;
@@ -61,7 +61,7 @@ router.get('/cart-data', (req, res) => {
 });
 
 // Route to display the cart page
-router.get('/cart', (req, res) => {
+router.get('/', (req, res) => {
   db.all('SELECT * FROM Cart', (err, rows) => {
     if (err) {
       res.status(500).send('Error retrieving cart items');

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
     <link rel="stylesheet" href="/stylesheets/product.css">
-    <script src="../public/javascripts/cart.js"></script> <!-- Ensure correct path -->
 </head>
 <body>
     <header>
@@ -15,7 +14,7 @@
                 <li><a href="/homepage.html">🏘️ Home</a></li>
                 <li><a href="/about.html">📚 About</a></li>
                 <li><a href="/search">🔍 Search</a></li>
-                <li><a href="/cart/">🛒 Cart</a></li>
+                <li><a href="/cart">🛒 Cart</a></li>
             </ul>
         </nav>
     </header>
@@ -92,6 +91,43 @@ function addToCart(productName, quantity, price) {
   });
 }
 
+function updateCart() {
+            fetch('/cart-data') // Correct path for fetching cart data
+            .then((response) => {
+                if (!response.ok) {
+                throw new Error('Failed to retrieve cart data');
+                }
+                return response.json();
+            })
+            .then((cart) => {
+                const productSection = document.querySelector('.product-section');
+                productSection.innerHTML = '';
+        
+                let totalPrice = 0;
+        
+                cart.forEach((item) => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('product-container');
+                productDiv.innerHTML = `
+                    <div class="product">
+                    <h2>${item.product_name}</h2>
+                    <p>Quantity: ${item.quantity}</p>
+                    <p>Price: $${item.product_price}</p>
+                    <button onclick="removeFromCart('${item.product_name}')">Remove from Cart</button>
+                    </div>
+                `;
+                productSection.appendChild(productDiv);
+        
+                totalPrice += item.product_price * item.quantity;
+                });
+        
+                const totalSection = document.querySelector('.total-section h2');
+                totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+            })
+            .catch((error) => {
+                console.error('Error updating cart display:', error);
+            });
+        }
     </script>
 </body>
 </html>
