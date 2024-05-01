@@ -16,15 +16,6 @@ var signupRouter = require('./routes/signup');
 
 const app = express();
 
-// Ssession middleware with a random session secret
-const crypto = require('crypto');
-const sessionSecret = crypto.randomBytes(64).toString('hex');
-app.use(session({
-  secret: sessionSecret,
-  resave: false,
-  saveUninitialized: true
-}));
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -34,6 +25,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'wsu489',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
 
 app.use('/', indexRouter);
 app.use('/products', productsRouter);
