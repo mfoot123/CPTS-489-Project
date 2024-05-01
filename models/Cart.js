@@ -16,7 +16,7 @@ Cart.init({
   },
   productPrice: {
     type: DataTypes.DOUBLE,
-    allowNull: false, // Ensure this constraint to avoid notNull errors
+    allowNull: false,
   },
   quantity: {
     type: DataTypes.INTEGER,
@@ -29,10 +29,9 @@ Cart.init({
 }, {
   sequelize,
   modelName: 'Cart',
-  timestamps: false, // Disable timestamps if not needed
+  timestamps: false,
 });
 
-// Relationship with Product
 Cart.belongsTo(Product, { foreignKey: 'productName', targetKey: 'name' });
 
 module.exports = Cart;

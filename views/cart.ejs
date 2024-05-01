@@ -62,164 +62,123 @@
 
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        function updateCart() {
-            fetch('/cart/cart-data') // Correct path for fetching cart data
-            .then((response) => {
-                if (!response.ok) {
-                throw new Error('Failed to retrieve cart data');
+        // display cart data in the product section
+        updateCart();
+
+        // create a Stripe client with public key
+        var stripe = Stripe('pk_test_51P6TkSA2UcryXt5uZdkSlaKOCe71Vu7rqnK13f0ezVj3qK0OcPmTCXJSZWm4hxSGkPBtbC4ITite97StSXRrMk2J00gnMhyWR7');
+
+        // create an elements instance
+        var elements = stripe.elements();
+
+        // Create an card element instance
+        var card = elements.create('card');
+
+        // add card element into div
+        card.mount('#card-element');
+
+        // form creation
+        var form = document.getElementById('payment-form');
+
+        // listen for submission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // create token
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+
+                    // inform the user if there was an error.
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+
+                    // send the token to /charge in app.js
+                    fetch('/charge', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({token: result.token.id})
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        console.log(data);
+                    });
                 }
-                return response.json();
+            });
+        });
+
+        function removeFromCart(productName) {
+            fetch('/cart/remove-from-cart', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productName }),
             })
-            .then((cart) => {
-                const productSection = document.querySelector('.product-section');
-                productSection.innerHTML = '';
-        
-                let totalPrice = 0;
-        
-                cart.forEach((item) => {
-                const productDiv = document.createElement('div');
-                productDiv.classList.add('product-container');
-                productDiv.innerHTML = `
-                    <div class="product">
-                    <h2>${item.product_name}</h2>
-                    <p>Quantity: ${item.quantity}</p>
-                    <p>Price: $${item.product_price}</p>
-                    <button onclick="removeFromCart('${item.product_name}')">Remove from Cart</button>
-                    </div>
-                `;
-                productSection.appendChild(productDiv);
-        
-                totalPrice += item.product_price * item.quantity;
-                });
-        
-                const totalSection = document.querySelector('.total-section h2');
-                totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+            .then((response) => {
+            if (!response.ok) {
+                throw new Error('Failed to remove from cart');
+            }
+            return response.json();
+            })
+            .then((data) => {
+            if (data.success) {
+                console.log('Product removed from cart');
+                updateCart();
+            } else {
+                console.error('Error removing product from cart:', data.message);
+            }
             })
             .catch((error) => {
-                console.error('Error updating cart display:', error);
+            console.error('Error in removeFromCart:', error);
             });
         }
-  
-    </script>
-        <script>
-            // display cart data in the product section
-            updateCart();
-    
-            // create a Stripe client with public key
-            var stripe = Stripe('pk_test_51P6TkSA2UcryXt5uZdkSlaKOCe71Vu7rqnK13f0ezVj3qK0OcPmTCXJSZWm4hxSGkPBtbC4ITite97StSXRrMk2J00gnMhyWR7');
-    
-            // create an elements instance
-            var elements = stripe.elements();
-    
-            // Create an card element instance
-            var card = elements.create('card');
-    
-            // add card element into div
-            card.mount('#card-element');
-    
-            // form creation
-            var form = document.getElementById('payment-form');
-    
-            // listen for submission
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-    
-                // create token
-                stripe.createToken(card).then(function(result) {
-                    if (result.error) {
-    
-                        // inform the user if there was an error.
-                        var errorElement = document.getElementById('card-errors');
-                        errorElement.textContent = result.error.message;
-                    } else {
-    
-                        // send the token to /charge in app.js
-                        fetch('/charge', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({token: result.token.id})
-                        })
-                        .then(function(response) {
-                            return response.json();
-                        })
-                        .then(function(data) {
-                            console.log(data);
-                        });
-                    }
-                });
-            });
 
-            function removeFromCart(productName) {
-                fetch('/cart/remove-from-cart', { // Adjusted endpoint
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ productName }),
-                })
+        function updateCart() {
+            fetch('/cart/cart-data') 
                 .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Failed to remove from cart');
+                    throw new Error('Failed to retrieve cart data');
                 }
                 return response.json();
                 })
-                .then((data) => {
-                if (data.success) {
-                    console.log('Product removed from cart');
-                    updateCart(); // Refresh cart display
-                } else {
-                    console.error('Error removing product from cart:', data.message);
+                .then((cart) => {
+                const productSection = document.querySelector('.product-section');
+                productSection.innerHTML = ''; 
+                
+                let totalPrice = 0;
+                
+                if (cart && Array.isArray(cart)) {
+                    cart.forEach((item) => {
+                    const productDiv = document.createElement('div');
+                    productDiv.classList.add('product-container');
+                    productDiv.innerHTML = `
+                        <div class="product">
+                        <h2>${item.productName}</h2> <!-- Check correct key -->
+                        <p>Quantity: ${item.quantity}</p>
+                        <p>Price: $${item.productPrice.toFixed(2)}</p> <!-- Formatting -->
+                        <button onclick="removeFromCart('${item.productName}')">Remove from Cart</button>
+                        </div>
+                    `;
+                    productSection.appendChild(productDiv);
+                    
+                    totalPrice += item.productPrice * item.quantity;
+                    });
                 }
-                })
-                .catch((error) => {
-                console.error('Error in removeFromCart:', error);
-                });
-            }
 
-            function updateCart() {
-  fetch('/cart/cart-data') // Correct path for fetching cart data
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to retrieve cart data');
-      }
-      return response.json();
-    })
-    .then((cart) => {
-      const productSection = document.querySelector('.product-section');
-      productSection.innerHTML = ''; // Clear previous content
-      
-      let totalPrice = 0;
-      
-      // Ensure cart is not null and has items
-      if (cart && Array.isArray(cart)) {
-        cart.forEach((item) => {
-          const productDiv = document.createElement('div');
-          productDiv.classList.add('product-container');
-          productDiv.innerHTML = `
-            <div class="product">
-              <h2>${item.productName}</h2> <!-- Check correct key -->
-              <p>Quantity: ${item.quantity}</p>
-              <p>Price: $${item.productPrice.toFixed(2)}</p> <!-- Formatting -->
-              <button onclick="removeFromCart('${item.productName}')">Remove from Cart</button>
-            </div>
-          `;
-          productSection.appendChild(productDiv);
-          
-          totalPrice += item.productPrice * item.quantity; // Correct price key
-        });
-      }
+            const totalSection = document.querySelector('.total-section h2');
+            totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`; // Update total price
+            })
+            .catch((error) => {
+            console.error('Error updating cart display:', error);
+            // Optional: Provide feedback to the user
+            });
+        }
 
-      const totalSection = document.querySelector('.total-section h2');
-      totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`; // Update total price
-    })
-    .catch((error) => {
-      console.error('Error updating cart display:', error);
-      // Optional: Provide feedback to the user
-    });
-}
-
-        </script>
+    </script>
 </body>
 </html>

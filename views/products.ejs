@@ -20,114 +20,110 @@
     </header>
     
     <div class="product-container">
-        <% products.forEach(product => { %> <!-- Use forEach for correct iteration -->
+        <% products.forEach(product => { %>
             <div class="product">
-                <img src="<%= product.imageUrl %>" alt="<%= product.name %>"> <!-- Correct use of EJS -->
+                <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
                 <h2><%= product.name %></h2>
                 <p><%= product.description %></p>
                 <p><a href="<%= product.guideUrl %>">Documentation for <%= product.name %></a></p>
-                <p>Price: $<%= product.price.toFixed(2) %></p> <!-- Ensure price is properly formatted -->
+                <p>Price: $<%= product.price.toFixed(2) %></p> 
 
-                <!-- Ensure correct data types when calling addToCart -->
                 <button onclick="addToCart('<%= product.name %>', 1, parseFloat('<%= product.price %>'))">Add to Cart</button>
             </div>
-        <% }); %> <!-- Ensure proper closing of the forEach block -->
+        <% }); %>
     </div>
-
     <script>
-function addToCart(productName, quantity, price) {
-  // Initial log to confirm function execution
-  console.log("addToCart called:", { productName, quantity, price });
+    function addToCart(productName, quantity, price) {
 
-  // Check for undefined or null values
-  if (!productName) {
-    console.error("Product name is undefined or null");
-  }
+        console.log("addToCart called:", { productName, quantity, price });
 
-  if (!price && price !== 0) {
-    console.error("Price is undefined or null");
-  }
-
-  // Confirm the data before making the fetch request
-  console.log("Data to be sent:", {
-    productName,
-    quantity,
-    price, // Check if this is a valid number
-  });
-
-  fetch('/cart/add-to-cart', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      productName,
-      quantity,
-      price, // Ensure 'price' is a valid number
-    }),
-  })
-  .then((response) => {
-    console.log("Response status:", response.status); // Check the HTTP status code
-
-    if (!response.ok) { // If response is not OK, log details
-      console.error("Failed to add to cart. Status:", response.status);
-      throw new Error('Failed to add to cart');
-    }
-
-    return response.json(); // Parse the response as JSON
-  })
-  .then((data) => {
-    console.log("Response data:", data); // Check the received data
-
-    if (data.success) {
-      console.log("Product successfully added to cart:", data);
-      updateCart(); // Refresh cart display
-    } else {
-      console.error("Failed to add product to cart. Message:", data.message);
-    }
-  })
-  .catch((error) => { // Handle errors from fetch
-    console.error('Error in addToCart:', error);
-  });
-}
-
-function updateCart() {
-            fetch('/cart/cart-data') // Correct path for fetching cart data
-            .then((response) => {
-                if (!response.ok) {
-                throw new Error('Failed to retrieve cart data');
-                }
-                return response.json();
-            })
-            .then((cart) => {
-                const productSection = document.querySelector('.product-section');
-                productSection.innerHTML = '';
-        
-                let totalPrice = 0;
-        
-                cart.forEach((item) => {
-                const productDiv = document.createElement('div');
-                productDiv.classList.add('product-container');
-                productDiv.innerHTML = `
-                    <div class="product">
-                    <h2>${item.product_name}</h2>
-                    <p>Quantity: ${item.quantity}</p>
-                    <p>Price: $${item.product_price}</p>
-                    <button onclick="removeFromCart('${item.product_name}')">Remove from Cart</button>
-                    </div>
-                `;
-                productSection.appendChild(productDiv);
-        
-                totalPrice += item.product_price * item.quantity;
-                });
-        
-                const totalSection = document.querySelector('.total-section h2');
-                totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
-            })
-            .catch((error) => {
-                console.error('Error updating cart display:', error);
-            });
+        if (!productName) {
+            console.error("Product name is undefined or null");
         }
+
+        if (!price && price !== 0) {
+            console.error("Price is undefined or null");
+        }
+
+        console.log("Data to be sent:", {
+            productName,
+            quantity,
+            price,
+        });
+
+        fetch('/cart/add-to-cart', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+            productName,
+            quantity,
+            price,
+            }),
+        })
+        .then((response) => {
+            console.log("Response status:", response.status);
+
+            if (!response.ok) {
+            console.error("Failed to add to cart. Status:", response.status);
+            throw new Error('Failed to add to cart');
+            }
+
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Response data:", data);
+
+            if (data.success) {
+            console.log("Product successfully added to cart:", data);
+            updateCart();
+            } else {
+            console.error("Failed to add product to cart. Message:", data.message);
+            }
+        })
+        .catch((error) => { 
+            console.error('Error in addToCart:', error);
+        });
+    }
+
+    function updateCart() {
+        fetch('/cart/cart-data')
+        .then((response) => {
+            if (!response.ok) {
+            throw new Error('Failed to retrieve cart data');
+            }
+            return response.json();
+        })
+        .then((cart) => {
+            const productSection = document.querySelector('.product-section');
+            productSection.innerHTML = '';
+    
+            let totalPrice = 0;
+    
+            cart.forEach((item) => {
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('product-container');
+            productDiv.innerHTML = `
+                <div class="product">
+                <h2>${item.product_name}</h2>
+                <p>Quantity: ${item.quantity}</p>
+                <p>Price: $${item.product_price}</p>
+                <button onclick="removeFromCart('${item.product_name}')">Remove from Cart</button>
+                </div>
+            `;
+            productSection.appendChild(productDiv);
+    
+            totalPrice += item.product_price * item.quantity;
+            });
+    
+            const totalSection = document.querySelector('.total-section h2');
+            totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+        })
+        .catch((error) => {
+            console.error('Error updating cart display:', error);
+        });
+    }
     </script>
 </body>
 </html>
