@@ -1,0 +1,26 @@
+<% if (locals.msg) { %>
+  <% if (msg === "added") { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+          Product added successfully to the cart!
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+  <% } else if (msg === "deleted") { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+          Item removed successfully from the cart.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+  <% } else if (msg === "updated") { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+          Cart updated successfully.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+  <% } else { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          Error during cart operation.
+          <p class="mb-0"><%= msg %></p>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+  <% } %>
+<% } else { %>
+  <p>No cart operation message.</p>
+<% } %>
