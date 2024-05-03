@@ -116,11 +116,13 @@
             const messageContainer = document.querySelector('.message-container');
             if (!messageContainer) return;
 
-            // Show the message-container
+            // show container
             messageContainer.style.display = 'block';
 
-            messageContainer.innerHTML = ''; /* Clear any previous messages */
+            // clear existing content
+            messageContainer.innerHTML = ''
 
+            // deletion alerts
             const alertClass = alertType === 'error' ? 'alert-danger' : 'alert-success';
             const content = `
                 <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
@@ -129,13 +131,16 @@
                 </div>
             `;
 
-            messageContainer.innerHTML = content; /* Insert the new message */
+            // message content insertion
+            messageContainer.innerHTML = content;
 
-            // Hide the container when the close button is clicked
+            // event listener to close button to hide the container when closed
             const closeButton = messageContainer.querySelector('.btn-close');
             if (closeButton) {
                 closeButton.addEventListener('click', () => {
-                    messageContainer.style.display = 'none'; /* Hide the container */
+
+                    // hide when closed
+                    messageContainer.style.display = 'none';
                 });
             }
         }
