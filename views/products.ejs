@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
     <link rel="stylesheet" href="/stylesheets/product.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+    crossorigin="anonymous"></script>
 </head>
 <body>
     <header>
@@ -18,31 +21,37 @@
             </ul>
         </nav>
     </header>
+    <body>
+        <% include("cartmsg")%>
+        <div>
+            <div class="message-container"></div>
+            <div class="product-container">
+                <% products.forEach(product => { %>
+                    <div class="product">
+                        <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+                        <h2><%= product.name %></h2>
+                        <p><%= product.description %></p>
+                        <p><a href="<%= product.guideUrl %>">Documentation for <%= product.name %></a></p>
+                        <p>Price: $<%= product.price.toFixed(2) %></p> 
     
-    <div class="product-container">
-        <% products.forEach(product => { %>
-            <div class="product">
-                <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
-                <h2><%= product.name %></h2>
-                <p><%= product.description %></p>
-                <p><a href="<%= product.guideUrl %>">Documentation for <%= product.name %></a></p>
-                <p>Price: $<%= product.price.toFixed(2) %></p> 
-
-                <button onclick="addToCart('<%= product.name %>', 1, parseFloat('<%= product.price %>'))">Add to Cart</button>
+                        <button onclick="addToCart('<%= product.name %>', 1, parseFloat('<%= product.price %>'))">Add to Cart</button>
+                    </div>
+                <% }); %>
             </div>
-        <% }); %>
-    </div>
+        </div>
+    </body>
     <script>
     function addToCart(productName, quantity, price) {
-
         console.log("addToCart called:", { productName, quantity, price });
 
         if (!productName) {
             console.error("Product name is undefined or null");
+            return; // Stop execution if validation fails
         }
 
         if (!price && price !== 0) {
             console.error("Price is undefined or null");
+            return; // Stop execution if validation fails
         }
 
         console.log("Data to be sent:", {
@@ -54,76 +63,73 @@
         fetch('/cart/add-to-cart', {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-            productName,
-            quantity,
-            price,
+                productName,
+                quantity,
+                price,
             }),
         })
         .then((response) => {
             console.log("Response status:", response.status);
 
             if (!response.ok) {
-            console.error("Failed to add to cart. Status:", response.status);
-            throw new Error('Failed to add to cart');
+                console.error("Failed to add to cart. Status:", response.status);
+                throw new Error('Failed to add to cart');
             }
 
             return response.json();
         })
         .then((data) => {
             console.log("Response data:", data);
-
             if (data.success) {
-            console.log("Product successfully added to cart:", data);
-            updateCart();
+                displayMessage('success', `${productName} added to cart!`);
             } else {
-            console.error("Failed to add product to cart. Message:", data.message);
+                displayMessage('error', `Error adding ${productName} to cart: ${data.message}`);
             }
         })
         .catch((error) => { 
             console.error('Error in addToCart:', error);
+            displayMessage('error', error.toString());
         });
     }
 
-    function updateCart() {
-        fetch('/cart/cart-data')
-        .then((response) => {
-            if (!response.ok) {
-            throw new Error('Failed to retrieve cart data');
-            }
-            return response.json();
-        })
-        .then((cart) => {
-            const productSection = document.querySelector('.product-section');
-            productSection.innerHTML = '';
-    
-            let totalPrice = 0;
-    
-            cart.forEach((item) => {
-            const productDiv = document.createElement('div');
-            productDiv.classList.add('product-container');
-            productDiv.innerHTML = `
-                <div class="product">
-                <h2>${item.product_name}</h2>
-                <p>Quantity: ${item.quantity}</p>
-                <p>Price: $${item.product_price}</p>
-                <button onclick="removeFromCart('${item.product_name}')">Remove from Cart</button>
-                </div>
-            `;
-            productSection.appendChild(productDiv);
-    
-            totalPrice += item.product_price * item.quantity;
+    function displayMessage(alertType, message) {
+        const messageContainer = document.querySelector('.message-container');
+        if (!messageContainer) return;
+
+        // show container
+        messageContainer.style.display = 'block';
+
+        // clear existing content
+        messageContainer.innerHTML = ''; 
+
+        // alerts
+        const alertClass = alertType === 'error' ? 'alert-danger' : 'alert-success';
+        const content = `
+            <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+            </div>
+        `;
+
+        // message content insertion
+        messageContainer.innerHTML = content;
+
+        // event listener to close button to hide the container when closed
+        const closeButton = messageContainer.querySelector('.btn-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+
+                // hide when closed
+                messageContainer.style.display = 'none';
             });
-    
-            const totalSection = document.querySelector('.total-section h2');
-            totalSection.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
-        })
-        .catch((error) => {
-            console.error('Error updating cart display:', error);
-        });
+        }
     }
     </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
+integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+crossorigin="anonymous"></script>
 </body>
 </html>

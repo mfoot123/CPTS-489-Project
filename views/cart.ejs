@@ -16,6 +16,7 @@
         </ul>
     </nav>
 </header>
+<div class="message-container"></div>
 <body>
     <div class="container">
         <div>
@@ -111,32 +112,66 @@
             });
         });
 
+        function displayMessage(alertType, message) {
+            const messageContainer = document.querySelector('.message-container');
+            if (!messageContainer) return;
+
+            // show container
+            messageContainer.style.display = 'block';
+
+            // clear existing content
+            messageContainer.innerHTML = ''
+
+            // deletion alerts
+            const alertClass = alertType === 'error' ? 'alert-danger' : 'alert-success';
+            const content = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+                </div>
+            `;
+
+            // message content insertion
+            messageContainer.innerHTML = content;
+
+            // event listener to close button to hide the container when closed
+            const closeButton = messageContainer.querySelector('.btn-close');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+
+                    // hide when closed
+                    messageContainer.style.display = 'none';
+                });
+            }
+        }
+
+
         function removeFromCart(productName) {
             fetch('/cart/remove-from-cart', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ productName }),
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productName }),
             })
             .then((response) => {
-            if (!response.ok) {
-                throw new Error('Failed to remove from cart');
-            }
-            return response.json();
+                if (!response.ok) {
+                    throw new Error('Failed to remove from cart');
+                }
+                return response.json();
             })
             .then((data) => {
-            if (data.success) {
-                console.log('Product removed from cart');
-                updateCart();
-            } else {
-                console.error('Error removing product from cart:', data.message);
+                if (data.success) {
+                    displayMessage('success', `${productName} removed from cart`);
+                    updateCart();
+                } else {
+                    displayMessage('error', `Error removing ${productName}: ${data.message}`);
+                }
+                })
+                .catch((error) => {
+                    displayMessage('error', `Error: ${error.message}`);
+                });
             }
-            })
-            .catch((error) => {
-            console.error('Error in removeFromCart:', error);
-            });
-        }
 
         function updateCart() {
             fetch('/cart/cart-data') 

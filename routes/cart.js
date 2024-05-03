@@ -6,6 +6,14 @@ const sequelize = require('../db');
 
 const db = new sqlite3.Database("database/repairdb.sqlite");
 
+router.use((req, res, next) => {
+    if(req.query.msg){
+        res.locals.msg = req.query.msg;
+        res.locals.courseid = req.query.name;
+    }
+    next();
+});
+
 // Route to add an item to the cart
 router.post('/add-to-cart', async (req, res) => {
     const { productName, quantity = 1, price } = req.body;
