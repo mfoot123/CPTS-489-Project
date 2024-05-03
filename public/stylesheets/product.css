@@ -125,7 +125,17 @@ header nav ul li a {
     position: absolute;
     top: 10px;
     right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #000;
+    cursor: pointer;
     transition: all 0.3s ease;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    text-align: center;
   }
   
   .alert .btn-close:hover {

@@ -88,3 +88,56 @@ button {
 button:hover {
     background-color: lightblue;
 }
+
+.message-container {
+    display: none;
+    position: absolute;
+    top: 85px;
+    left: 0;
+    right: 0;
+    padding: 10px 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    z-index: 1000;
+  }
+  
+  .alert {
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    padding: 10px 15px;
+  }
+  
+  .alert.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .alert.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .alert .btn-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    text-align: center;
+  }
+  
+  .alert .btn-close:hover {
+    opacity: 0.7;
+  }
