@@ -12,3 +12,7 @@ testing123
 Admin:
 testuser
 1234
+
+To test STRIPE api
+
+4242 4242 4242 4242 - Any date - Any pin
