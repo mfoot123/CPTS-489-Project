@@ -12,6 +12,8 @@ const logger = require('morgan');
 const User = require('./models/User');
 const Product = require('./models/Product');
 const Cart = require('./models/Cart');
+const Company = require('./models/Company');
+const ProductCategories = require('./models/ProductCategories');
 
 // Import routers
 const indexRouter = require('./routes/index');
@@ -19,6 +21,8 @@ const productsRouter = require('./routes/products');
 const searchRouter = require('./routes/search');
 const signupRouter = require('./routes/signup');
 const cartRouter = require('./routes/cart');
+const homepageRouter = require('./routes/homepage');
+const companyhomeRouter = require('./routes/companyhome');
 
 const app = express();
 
@@ -49,6 +53,8 @@ app.use('/products', productsRouter);
 app.use('/search', searchRouter);
 app.use('/signup', signupRouter);
 app.use('/cart', cartRouter);
+app.use('/homepage', homepageRouter);
+app.use('/companyhome', companyhomeRouter);
 
 // Route for handling Stripe payment
 app.post('/charge', async (req, res) => {

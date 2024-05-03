@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple</title>
+    <link rel="stylesheet" href="/stylesheets/producthome.css">
+</head>
+<header>
+    <a href="homepage"><h1>Welcome to our CPT_S 489 Project!</h1></a>
+    <nav>
+        <ul>
+            <li><a href="homepage">🏘️ Home</a></li>
+            <li><a href="about.html">📚 About</a></li>
+            <li><a href="search">🔍 Search</a></li>
+            <li><a href="cart">🛒 Cart</a></li>
+        </ul>
+    </nav>
+</header>
+<body>
+    <div>
+        <div class = "center">
+            <h2>Which product are you looking to repair?</h2>
+        </div>
+        <div class="container">
+            <% productCategories.forEach(productCategory => { %>
+            <div class="box">
+                <a href="products?category=<%= productCategory.category %>"> <img src="<%= productCategory.imageUrl %>" alt="<%= productCategory.category %>">
+                    <div class="overlay">
+                        <%= productCategory.category %>
+                    </div>
+                </a>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</body>
+</html>
