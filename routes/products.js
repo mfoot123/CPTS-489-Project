@@ -23,7 +23,6 @@ router.get('/', async function(req, res, next) {
         });
         if(req.query.msg){
             res.locals.msg = req.query.msg
-            res.locals.courseid = req.query.courseid
           }
         res.render('products', {products} );
     }
