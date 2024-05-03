@@ -22,7 +22,9 @@
         </nav>
     </header>
 
-    <%- include("cartmsg")%>
+    <div class="message-container"></div>
+
+    <!-- <%- include("cartmsg")%> -->
     
     <div class="product-container">
         <% products.forEach(product => { %>
@@ -39,58 +41,71 @@
     </div>
     <script>
     function addToCart(productName, quantity, price) {
+    console.log("addToCart called:", { productName, quantity, price });
 
-        console.log("addToCart called:", { productName, quantity, price });
+    if (!productName) {
+        console.error("Product name is undefined or null");
+        return;
+    }
 
-        if (!productName) {
-            console.error("Product name is undefined or null");
-        }
+    if (!price && price !== 0) {
+        console.error("Price is undefined or null");
+        return;
+    }
 
-        if (!price && price !== 0) {
-            console.error("Price is undefined or null");
-        }
+    console.log("Data to be sent:", {
+        productName,
+        quantity,
+        price,
+    });
 
-        console.log("Data to be sent:", {
-            productName,
-            quantity,
-            price,
-        });
-
-        fetch('/cart/add-to-cart', {
-            method: 'POST',
-            headers: {
+    fetch('/cart/add-to-cart', {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        },
+        body: JSON.stringify({
             productName,
             quantity,
             price,
-            }),
-        })
-        .then((response) => {
-            console.log("Response status:", response.status);
+        }),
+    })
+    .then((response) => {
+        console.log("Response status:", response.status);
 
-            if (!response.ok) {
+        if (!response.ok) {
             console.error("Failed to add to cart. Status:", response.status);
             throw new Error('Failed to add to cart');
-            }
+        }
 
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Response data:", data);
+        return response.json();
+    })
+    .then((data) => {
+        console.log("Response data:", data);
+        displayMessage(data.success ? 'added' : 'error', data.message);
+    })
+    .catch((error) => { 
+        console.error('Error in addToCart:', error);
+        displayMessage('error', error.toString());
+    });
+}
 
-            if (data.success) {
-            console.log("Product successfully added to cart:", data);
-            updateCart();
-            } else {
-            console.error("Failed to add product to cart. Message:", data.message);
-            }
-        })
-        .catch((error) => { 
-            console.error('Error in addToCart:', error);
-        });
-    }
+function displayMessage(type, message) {
+    const messageContainer = document.querySelector('.message-container');
+    if (!messageContainer) return;
+
+    messageContainer.innerHTML = '';
+    let alertType = type === 'error' ? 'alert-danger' : 'alert-success';
+    let operation = type === 'added' ? 'added to' : 'updated in';
+    let content = `
+        <div class="alert ${alertType} alert-dismissible fade show" role="alert">
+            ${message || `Product ${operation} the cart successfully!`}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    messageContainer.innerHTML = content;
+}
+
 
     function updateCart() {
         fetch('/cart/cart-data')
