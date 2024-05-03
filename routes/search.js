@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const Company = require('../models/Company');
 const Product = require('../models/Product');
 const sequelize = require('../db');
 
@@ -34,21 +35,6 @@ router.get('/', async function(req, res, next) {
     {
         console.log(error.message);
         res.redirect("/?msg=failed+to+find+products");
-    }
-});
-
-router.get('/results', async function(req, res, next) {
-    try{
-        const keyword = req.query.search.toLowerCase();
-        const products = await Product.findAll({
-            where: sequelize.where( sequelize.fn('LOWER', sequelize.col('name')), 'LIKE', '%' + keyword + '%')
-        });
-        res.render('products', {products} );
-    }
-    catch(error)
-    {
-        console.log(error);
-        res.redirect("/?msg=no+products+contain+that+keyword")
     }
 });
 
